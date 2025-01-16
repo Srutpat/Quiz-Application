@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 public class Score extends JFrame implements ActionListener {
-   Score(String name, int score) {
+   Score(String name, int score,int skippedCount) {
       this.setBounds(400, 150, 750, 550);
       this.getContentPane().setBackground(Color.WHITE);
       this.setLayout((LayoutManager)null);
@@ -31,6 +31,10 @@ public class Score extends JFrame implements ActionListener {
       lblscore.setBounds(350, 200, 300, 30);
       lblscore.setFont(new Font("Tahoma", 0, 26));
       this.add(lblscore);
+      JLabel skipped = new JLabel("You skipped " + skippedCount+" questions");
+      skipped.setBounds(350, 350, 450, 30);
+      skipped.setFont(new Font("Tahoma", 0, 20));
+      this.add(skipped);
       JButton submit = new JButton("Play Again");
       submit.setBounds(380, 270, 120, 30);
       submit.setBackground(new Color(30, 144, 255));
@@ -46,6 +50,6 @@ public class Score extends JFrame implements ActionListener {
    }
 
    public static void main(String[] args) {
-      new Score("User", 0);
+      new Score("User", 0,0);
    }
 }
