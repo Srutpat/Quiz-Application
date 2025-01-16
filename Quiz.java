@@ -1,4 +1,4 @@
-// Source code is decompiled from a .class file using FernFlower decompiler.
+
 package quiz.application;
 
 import java.awt.Color;
@@ -32,6 +32,7 @@ public class Quiz extends JFrame implements ActionListener {
    public static int ans_given = 0;
    public static int count = 0;
    public static int score = 0;
+   public static int skippedCount = 0;
    String name;
 
    Quiz(String name) {
@@ -161,6 +162,17 @@ public class Quiz extends JFrame implements ActionListener {
       this.start(count);
       this.setVisible(true);
    }
+   
+          void checkSkippedQuestions(){
+         
+         for(int i = 0;i<useranswers.length;i++){
+             
+             if(useranswers[i][0] == null || useranswers[i][0].isEmpty()){
+                 skippedCount++;
+             
+             }
+         }
+}
 
    public void actionPerformed(ActionEvent ae) {
       if (ae.getSource() == this.next) {
@@ -184,16 +196,25 @@ public class Quiz extends JFrame implements ActionListener {
          ++count;
          this.start(count);
       } else if (ae.getSource() == this.lifeline) {
-         if (count != 2 && count != 4 && count != 6 && count != 8 && count != 9) {
-            this.opt1.setEnabled(false);
-            this.opt4.setEnabled(false);
-         } else {
-            this.opt2.setEnabled(false);
-            this.opt3.setEnabled(false);
-         }
+        // Only allow the lifeline to be used once
+        this.lifeline.setEnabled(false);
 
-         this.lifeline.setEnabled(false);
-      } else if (ae.getSource() == this.submit) {
+        // Find the correct answer for the current question
+        String correctAnswer = this.answers[count][1];
+
+        // Create a list of the four options
+        JRadioButton[] options = {this.opt1, this.opt2, this.opt3, this.opt4};
+        
+        // Randomly disable two incorrect options
+        int disabledCount = 0;
+        for (JRadioButton option : options) {
+            if (!option.getText().equals(correctAnswer) && disabledCount < 2) {
+                option.setEnabled(false);
+                disabledCount++;
+            }
+        }
+    }  else if (ae.getSource() == this.submit) {
+          checkSkippedQuestions();
          ans_given = 1;
          if (this.groupoptions.getSelection() == null) {
             this.useranswers[count][0] = "";
@@ -208,9 +229,11 @@ public class Quiz extends JFrame implements ActionListener {
                score += 0;
             }
          }
-
+         
+   
+         
          this.setVisible(false);
-         new Score(this.name, score);
+         new Score(this.name, score,skippedCount);
       }
 
    }
@@ -265,7 +288,7 @@ public class Quiz extends JFrame implements ActionListener {
             }
 
             this.setVisible(false);
-            new Score(this.name, score);
+            new Score(this.name, score,skippedCount);
          } else {
             if (this.groupoptions.getSelection() == null) {
                this.useranswers[count][0] = "";
@@ -298,3 +321,4 @@ public class Quiz extends JFrame implements ActionListener {
       new Quiz("User");
    }
 }
+
